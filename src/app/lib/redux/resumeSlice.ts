@@ -8,6 +8,7 @@ import type {
   ResumeProject,
   ResumeSkills,
   ResumeWorkExperience,
+  SkillCategory,
 } from "lib/redux/types";
 import type { ShowForm } from "lib/redux/settingsSlice";
 
@@ -47,7 +48,7 @@ export const initialFeaturedSkills: FeaturedSkill[] = Array(6).fill({
 });
 export const initialSkills: ResumeSkills = {
   featuredSkills: initialFeaturedSkills,
-  descriptions: [],
+  categories: [],
 };
 
 export const initialCustom = {
@@ -114,7 +115,7 @@ export const resumeSlice = createSlice({
     changeSkills: (
       draft,
       action: PayloadAction<
-        | { field: "descriptions"; value: string[] }
+        | { field: "categories"; value: SkillCategory[] }
         | {
             field: "featuredSkills";
             idx: number;
@@ -124,9 +125,9 @@ export const resumeSlice = createSlice({
       >
     ) => {
       const { field } = action.payload;
-      if (field === "descriptions") {
+      if (field === "categories") {
         const { value } = action.payload;
-        draft.skills.descriptions = value;
+        draft.skills.categories = value;
       } else {
         const { idx, skill, rating } = action.payload;
         const featuredSkill = draft.skills.featuredSkills[idx];

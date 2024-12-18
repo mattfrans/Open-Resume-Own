@@ -79,9 +79,31 @@ export const END_HOME_RESUME: Resume = {
       { skill: "React", rating: 3 },
       { skill: "C++", rating: 2 },
     ],
-    descriptions: [
-      "Tech: React Hooks, GraphQL, Node.js, SQL, Postgres, NoSql, Redis, REST API, Git",
-      "Soft: Teamwork, Creative Problem Solving, Communication, Learning Mindset, Agile",
+    categories: [
+      {
+        name: "Technologies",
+        skills: [
+          "React Hooks",
+          "GraphQL",
+          "Node.js",
+          "SQL",
+          "Postgres",
+          "NoSql",
+          "Redis",
+          "REST API",
+          "Git",
+        ],
+      },
+      {
+        name: "Soft Skills",
+        skills: [
+          "Teamwork",
+          "Creative Problem Solving",
+          "Communication",
+          "Learning Mindset",
+          "Agile",
+        ],
+      },
     ],
   },
   custom: {
@@ -101,7 +123,7 @@ export const START_HOME_RESUME: Resume = {
       skill: "",
       rating: item.rating,
     })),
-    descriptions: [],
+    categories: [],
   },
   custom: {
     descriptions: [],

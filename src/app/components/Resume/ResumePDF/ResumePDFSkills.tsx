@@ -3,6 +3,7 @@ import {
   ResumePDFSection,
   ResumePDFBulletList,
   ResumeFeaturedSkill,
+  ResumePDFText,
 } from "components/Resume/ResumePDF/common";
 import { styles, spacing } from "components/Resume/ResumePDF/styles";
 import type { ResumeSkills } from "lib/redux/types";
@@ -11,14 +12,12 @@ export const ResumePDFSkills = ({
   heading,
   skills,
   themeColor,
-  showBulletPoints,
 }: {
   heading: string;
   skills: ResumeSkills;
   themeColor: string;
-  showBulletPoints: boolean;
 }) => {
-  const { descriptions, featuredSkills } = skills;
+  const { categories, featuredSkills } = skills;
   const featuredSkillsWithText = featuredSkills.filter((item) => item.skill);
   const featuredSkillsPair = [
     [featuredSkillsWithText[0], featuredSkillsWithText[3]],
@@ -55,12 +54,15 @@ export const ResumePDFSkills = ({
           ))}
         </View>
       )}
-      <View style={{ ...styles.flexCol }}>
-        <ResumePDFBulletList
-          items={descriptions}
-          showBulletPoints={showBulletPoints}
-        />
-      </View>
+
+      {categories.map((category, idx) => (
+        <View key={idx} style={{ marginTop: spacing[4] }}>
+          <ResumePDFText bold={true} style={{ marginBottom: spacing[2] }}>
+            {category.name}
+          </ResumePDFText>
+          <ResumePDFBulletList items={category.skills} showBulletPoints={true} />
+        </View>
+      ))}
     </ResumePDFSection>
   );
 };

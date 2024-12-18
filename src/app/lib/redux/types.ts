@@ -33,9 +33,14 @@ export interface FeaturedSkill {
   rating: number;
 }
 
+export interface SkillCategory {
+  name: string;
+  skills: string[];
+}
+
 export interface ResumeSkills {
   featuredSkills: FeaturedSkill[];
-  descriptions: string[];
+  categories: SkillCategory[];
 }
 
 export interface ResumeCustom {
