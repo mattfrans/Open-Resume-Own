@@ -6,26 +6,12 @@ import { ResumePDFEducation } from "components/Resume/ResumePDF/ResumePDFEducati
 import { ResumePDFProject } from "components/Resume/ResumePDF/ResumePDFProject";
 import { ResumePDFSkills } from "components/Resume/ResumePDF/ResumePDFSkills";
 import { ResumePDFCustom } from "components/Resume/ResumePDF/ResumePDFCustom";
+import { ResumePDFReferences } from "components/Resume/ResumePDF/ResumePDFReferences";
 import { DEFAULT_FONT_COLOR } from "lib/redux/settingsSlice";
 import type { Settings, ShowForm } from "lib/redux/settingsSlice";
 import type { Resume } from "lib/redux/types";
 import { SuppressResumePDFErrorMessage } from "components/Resume/ResumePDF/common/SuppressResumePDFErrorMessage";
 
-/**
- * Note: ResumePDF is supposed to be rendered inside PDFViewer. However,
- * PDFViewer is rendered too slow and has noticeable delay as you enter
- * the resume form, so we render it without PDFViewer to make it render
- * instantly. There are 2 drawbacks with this approach:
- * 1. Not everything works out of box if not rendered inside PDFViewer,
- *    e.g. svg doesn't work, so it takes in a isPDF flag that maps react
- *    pdf element to the correct dom element.
- * 2. It throws a lot of errors in console log, e.g. "<VIEW /> is using incorrect
- *    casing. Use PascalCase for React components, or lowercase for HTML elements."
- *    in development, causing a lot of noises. We can possibly workaround this by
- *    mapping every react pdf element to a dom element, but for now, we simply
- *    suppress these messages in <SuppressResumePDFErrorMessage />.
- *    https://github.com/diegomura/react-pdf/issues/239#issuecomment-487255027
- */
 export const ResumePDF = ({
   resume,
   settings,
@@ -35,28 +21,32 @@ export const ResumePDF = ({
   settings: Settings;
   isPDF?: boolean;
 }) => {
-  const { profile, workExperiences, educations, projects, skills, custom } =
+  const { profile, workExperiences, educations, projects, skills, custom, references } =
     resume;
   const { name } = profile;
   const {
     fontFamily,
     fontSize,
     documentSize,
-    formToHeading,
     formToShow,
-    formsOrder,
+    formToHeading,
     showBulletPoints,
+    formsOrder,
   } = settings;
   const themeColor = settings.themeColor || DEFAULT_FONT_COLOR;
 
   const showFormsOrder = formsOrder.filter((form) => formToShow[form]);
+  const skillsIndex = showFormsOrder.indexOf("skills");
+  const formsBeforeSkills = skillsIndex !== -1 ? showFormsOrder.slice(0, skillsIndex) : showFormsOrder;
+  const formsAfterSkills = skillsIndex !== -1 ? showFormsOrder.slice(skillsIndex + 1) : [];
 
-  const formTypeToComponent: { [type in ShowForm]: () => JSX.Element } = {
+  const formToComponent: { [form in ShowForm]: () => JSX.Element } = {
     workExperiences: () => (
       <ResumePDFWorkExperience
         heading={formToHeading["workExperiences"]}
         workExperiences={workExperiences}
         themeColor={themeColor}
+        showBulletPoints={showBulletPoints["workExperiences"]}
       />
     ),
     educations: () => (
@@ -72,6 +62,7 @@ export const ResumePDF = ({
         heading={formToHeading["projects"]}
         projects={projects}
         themeColor={themeColor}
+        showBulletPoints={showBulletPoints["projects"]}
       />
     ),
     skills: () => (
@@ -79,7 +70,6 @@ export const ResumePDF = ({
         heading={formToHeading["skills"]}
         skills={skills}
         themeColor={themeColor}
-        showBulletPoints={showBulletPoints["skills"]}
       />
     ),
     custom: () => (
@@ -90,11 +80,19 @@ export const ResumePDF = ({
         showBulletPoints={showBulletPoints["custom"]}
       />
     ),
+    references: () => (
+      <ResumePDFReferences
+        heading={formToHeading["references"]}
+        references={references}
+        themeColor={themeColor}
+      />
+    ),
   };
 
   return (
     <>
       <Document title={`${name} Resume`} author={name} producer={"OpenResume"}>
+        {/* First Page */}
         <Page
           size={documentSize === "A4" ? "A4" : "LETTER"}
           style={{
@@ -124,12 +122,47 @@ export const ResumePDF = ({
               themeColor={themeColor}
               isPDF={isPDF}
             />
-            {showFormsOrder.map((form) => {
-              const Component = formTypeToComponent[form];
+            {formsBeforeSkills.map((form) => {
+              const Component = formToComponent[form];
               return <Component key={form} />;
             })}
           </View>
         </Page>
+
+        {/* Skills Page */}
+        {skillsIndex !== -1 && (
+          <Page
+            size={documentSize === "A4" ? "A4" : "LETTER"}
+            style={{
+              ...styles.flexCol,
+              color: DEFAULT_FONT_COLOR,
+              fontFamily,
+              fontSize: fontSize + "pt",
+            }}
+          >
+            {Boolean(settings.themeColor) && (
+              <View
+                style={{
+                  width: spacing["full"],
+                  height: spacing[3.5],
+                  backgroundColor: themeColor,
+                }}
+              />
+            )}
+            <View
+              style={{
+                ...styles.flexCol,
+                padding: `${spacing[0]} ${spacing[20]}`,
+              }}
+            >
+              {formToComponent["skills"]()}
+              {formsAfterSkills.map((form) => {
+                const Component = formToComponent[form];
+                return <Component key={form} />;
+              })}
+            </View>
+          </Page>
+        )}
       </Document>
       <SuppressResumePDFErrorMessage />
     </>

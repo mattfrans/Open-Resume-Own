@@ -1,6 +1,5 @@
 import { StyleSheet } from "@react-pdf/renderer";
 
-// Tailwindcss Spacing Design System: https://tailwindcss.com/docs/theme#spacing
 // It is converted from rem to pt (1rem = 12pt) since https://react-pdf.org/styling only accepts pt unit
 export const spacing = {
   0: "0",
@@ -39,6 +38,8 @@ export const spacing = {
   96: "288pt",
   full: "100%",
 } as const;
+
+const DEFAULT_FONT_COLOR = "#525252";
 
 export const styles = StyleSheet.create({
   flexRow: {

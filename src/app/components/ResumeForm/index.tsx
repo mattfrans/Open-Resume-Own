@@ -13,6 +13,7 @@ import { ProjectsForm } from "components/ResumeForm/ProjectsForm";
 import { SkillsForm } from "components/ResumeForm/SkillsForm";
 import { ThemeForm } from "components/ResumeForm/ThemeForm";
 import { CustomForm } from "components/ResumeForm/CustomForm";
+import { ReferencesForm } from "components/ResumeForm/ReferencesForm";
 import { FlexboxSpacer } from "components/FlexboxSpacer";
 import { cx } from "lib/cx";
 
@@ -22,6 +23,7 @@ const formTypeToComponent: { [type in ShowForm]: () => JSX.Element } = {
   projects: ProjectsForm,
   skills: SkillsForm,
   custom: CustomForm,
+  references: ReferencesForm,
 };
 
 export const ResumeForm = () => {
@@ -49,7 +51,7 @@ export const ResumeForm = () => {
         <ThemeForm />
         <br />
       </section>
-      <FlexboxSpacer maxWidth={50} className="hidden md:block" />
+      <FlexboxSpacer maxWidth={1280} />
     </div>
   );
 };

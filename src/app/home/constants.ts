@@ -3,6 +3,7 @@ import {
   initialProfile,
   initialProject,
   initialWorkExperience,
+  initialFeaturedSkill,
 } from "lib/redux/resumeSlice";
 import type { Resume } from "lib/redux/types";
 import { deepClone } from "lib/deep-clone";
@@ -109,23 +110,46 @@ export const END_HOME_RESUME: Resume = {
   custom: {
     descriptions: [],
   },
+  references: {
+    references: [
+      {
+        name: "Jane Doe",
+        title: "Senior Engineering Manager",
+        company: "Tech Corp",
+        email: "jane.doe@techcorp.com",
+        phone: "+1 234-567-8901"
+      },
+      {
+        name: "Bob Wilson",
+        title: "Technical Lead",
+        company: "Innovation Labs",
+        email: "bob.wilson@innolabs.com",
+        phone: "+1 345-678-9012"
+      }
+    ],
+  },
 };
 
 export const START_HOME_RESUME: Resume = {
-  profile: deepClone(initialProfile),
-  workExperiences: END_HOME_RESUME.workExperiences.map(() =>
-    deepClone(initialWorkExperience)
-  ),
-  educations: [deepClone(initialEducation)],
-  projects: [deepClone(initialProject)],
+  profile: {
+    name: "",
+    email: "",
+    phone: "",
+    url: "",
+    summary: "",
+    location: "",
+  },
+  workExperiences: [],
+  educations: [],
+  projects: [],
   skills: {
-    featuredSkills: END_HOME_RESUME.skills.featuredSkills.map((item) => ({
-      skill: "",
-      rating: item.rating,
-    })),
+    featuredSkills: [],
     categories: [],
   },
   custom: {
     descriptions: [],
+  },
+  references: {
+    references: [],
   },
 };

@@ -47,6 +47,18 @@ export interface ResumeCustom {
   descriptions: string[];
 }
 
+export interface Reference {
+  name: string;
+  title: string;
+  company: string;
+  email: string;
+  phone: string;
+}
+
+export interface ResumeReferences {
+  references: Reference[];
+}
+
 export interface Resume {
   profile: ResumeProfile;
   workExperiences: ResumeWorkExperience[];
@@ -54,6 +66,7 @@ export interface Resume {
   projects: ResumeProject[];
   skills: ResumeSkills;
   custom: ResumeCustom;
+  references: ResumeReferences;
 }
 
 export type ResumeKey = keyof Resume;

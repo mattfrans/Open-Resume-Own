@@ -12,6 +12,7 @@ export interface Settings {
     projects: boolean;
     skills: boolean;
     custom: boolean;
+    references: boolean;
   };
   formToHeading: {
     workExperiences: string;
@@ -19,6 +20,7 @@ export interface Settings {
     projects: string;
     skills: string;
     custom: string;
+    references: string;
   };
   formsOrder: ShowForm[];
   showBulletPoints: {
@@ -26,10 +28,18 @@ export interface Settings {
     projects: boolean;
     skills: boolean;
     custom: boolean;
+    references: boolean;
   };
 }
 
-export type ShowForm = keyof Settings["formToShow"];
+export type ShowForm =
+  | "workExperiences"
+  | "educations"
+  | "projects"
+  | "skills"
+  | "custom"
+  | "references";
+
 export type FormWithBulletPoints = keyof Settings["showBulletPoints"];
 export type GeneralSetting = Exclude<
   keyof Settings,
@@ -52,6 +62,7 @@ export const initialSettings: Settings = {
     projects: true,
     skills: true,
     custom: false,
+    references: false,
   },
   formToHeading: {
     workExperiences: "WORK EXPERIENCE",
@@ -59,13 +70,22 @@ export const initialSettings: Settings = {
     projects: "PROJECT",
     skills: "SKILLS",
     custom: "CUSTOM SECTION",
+    references: "REFERENCES",
   },
-  formsOrder: ["workExperiences", "educations", "projects", "skills", "custom"],
+  formsOrder: [
+    "workExperiences",
+    "educations",
+    "projects",
+    "skills",
+    "custom",
+    "references",
+  ],
   showBulletPoints: {
     educations: true,
     projects: true,
     skills: true,
     custom: true,
+    references: true,
   },
 };
 

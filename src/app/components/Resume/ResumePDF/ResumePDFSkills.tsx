@@ -1,11 +1,6 @@
-import { View } from "@react-pdf/renderer";
-import {
-  ResumePDFSection,
-  ResumePDFBulletList,
-  ResumeFeaturedSkill,
-  ResumePDFText,
-} from "components/Resume/ResumePDF/common";
-import { styles, spacing } from "components/Resume/ResumePDF/styles";
+import { View, Text } from "@react-pdf/renderer";
+import { ResumePDFSection, ResumePDFText } from "components/Resume/ResumePDF/common";
+import { styles } from "components/Resume/ResumePDF/styles";
 import type { ResumeSkills } from "lib/redux/types";
 
 export const ResumePDFSkills = ({
@@ -17,52 +12,59 @@ export const ResumePDFSkills = ({
   skills: ResumeSkills;
   themeColor: string;
 }) => {
-  const { categories, featuredSkills } = skills;
-  const featuredSkillsWithText = featuredSkills.filter((item) => item.skill);
-  const featuredSkillsPair = [
-    [featuredSkillsWithText[0], featuredSkillsWithText[3]],
-    [featuredSkillsWithText[1], featuredSkillsWithText[4]],
-    [featuredSkillsWithText[2], featuredSkillsWithText[5]],
-  ];
+  const { featuredSkills, descriptions } = skills;
+
+  if (!featuredSkills.length && !descriptions.length) {
+    return null;
+  }
 
   return (
     <ResumePDFSection themeColor={themeColor} heading={heading}>
-      {featuredSkillsWithText.length > 0 && (
-        <View style={{ ...styles.flexRowBetween, marginTop: spacing["0.5"] }}>
-          {featuredSkillsPair.map((pair, idx) => (
-            <View
-              key={idx}
-              style={{
-                ...styles.flexCol,
-              }}
-            >
-              {pair.map((featuredSkill, idx) => {
-                if (!featuredSkill) return null;
-                return (
-                  <ResumeFeaturedSkill
-                    key={idx}
-                    skill={featuredSkill.skill}
-                    rating={featuredSkill.rating}
-                    themeColor={themeColor}
-                    style={{
-                      justifyContent: "flex-end",
-                    }}
-                  />
-                );
-              })}
+      <View style={{ ...styles.flexCol, gap: 8 }}>
+        {featuredSkills.length > 0 && (
+          <View style={{ ...styles.section }}>
+            <ResumePDFText bold={true}>Featured Skills</ResumePDFText>
+            <View style={{ ...styles.flexRow, flexWrap: 'wrap' as const, gap: 4 }}>
+              {featuredSkills.map(({ skill, rating }, idx) => (
+                <View
+                  key={idx}
+                  style={{
+                    ...styles.flexRow,
+                    alignItems: 'center' as const,
+                    marginRight: 12,
+                    marginBottom: 4,
+                  }}
+                >
+                  <ResumePDFText>{skill}</ResumePDFText>
+                  <Text style={{ fontSize: 10, color: '#666' }}>
+                    {" "}
+                    ({rating}/5)
+                  </Text>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
-      )}
+          </View>
+        )}
 
-      {categories.map((category, idx) => (
-        <View key={idx} style={{ marginTop: spacing[4] }}>
-          <ResumePDFText bold={true} style={{ marginBottom: spacing[2] }}>
-            {category.name}
-          </ResumePDFText>
-          <ResumePDFBulletList items={category.skills} showBulletPoints={true} />
-        </View>
-      ))}
+        {descriptions.length > 0 && (
+          <View style={{ ...styles.section }}>
+            <ResumePDFText bold={true}>Additional Skills</ResumePDFText>
+            <View style={{ ...styles.flexRow, flexWrap: 'wrap' as const }}>
+              {descriptions.map((skill, idx) => (
+                <View
+                  key={idx}
+                  style={{
+                    marginRight: 12,
+                    marginBottom: 4,
+                  }}
+                >
+                  <ResumePDFText>{skill}</ResumePDFText>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+      </View>
     </ResumePDFSection>
   );
 };

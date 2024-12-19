@@ -22,10 +22,43 @@ export function* makeObjectCharIterator<T extends Object>(
   end: T,
   level = 0
 ) {
-  // Have to manually cast Object type and return T type due to https://github.com/microsoft/TypeScript/issues/47357
   const object: Object = level === 0 ? deepClone(start) : start;
+  
   for (const [key, endValue] of Object.entries(end)) {
-    if (typeof endValue === "object") {
+    if (Array.isArray(endValue)) {
+      // Initialize array if it doesn't exist
+      if (!object[key]) {
+        object[key] = [];
+      }
+      
+      // Handle array of objects
+      for (let i = 0; i < endValue.length; i++) {
+        if (i >= object[key].length) {
+          object[key].push(typeof endValue[i] === 'object' ? {} : '');
+        }
+        
+        if (typeof endValue[i] === 'object' && !Array.isArray(endValue[i])) {
+          const recursiveIterator = makeObjectCharIterator(
+            object[key][i],
+            endValue[i],
+            level + 1
+          );
+          while (true) {
+            const next = recursiveIterator.next();
+            if (next.done) break;
+            yield deepClone(object) as T;
+          }
+        } else {
+          object[key][i] = endValue[i];
+          yield deepClone(object) as T;
+        }
+      }
+    } else if (typeof endValue === "object" && endValue !== null) {
+      // Initialize object if it doesn't exist
+      if (!object[key]) {
+        object[key] = {};
+      }
+      
       const recursiveIterator = makeObjectCharIterator(
         object[key],
         endValue,
@@ -33,12 +66,13 @@ export function* makeObjectCharIterator<T extends Object>(
       );
       while (true) {
         const next = recursiveIterator.next();
-        if (next.done) {
-          break;
-        }
+        if (next.done) break;
         yield deepClone(object) as T;
       }
-    } else {
+    } else if (typeof endValue === "string") {
+      if (!object[key]) {
+        object[key] = "";
+      }
       for (let i = 1; i <= endValue.length; i++) {
         object[key] = endValue.slice(0, i);
         yield deepClone(object) as T;
@@ -50,10 +84,10 @@ export function* makeObjectCharIterator<T extends Object>(
 export const countObjectChar = (object: Object) => {
   let count = 0;
   for (const value of Object.values(object)) {
-    if (typeof value === "object") {
-      count += countObjectChar(value);
-    } else if (typeof value === "string") {
+    if (typeof value === "string") {
       count += value.length;
+    } else if (typeof value === "object") {
+      count += countObjectChar(value);
     }
   }
   return count;

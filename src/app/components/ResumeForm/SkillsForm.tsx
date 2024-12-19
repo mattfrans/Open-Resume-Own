@@ -9,7 +9,6 @@ import { useAppDispatch, useAppSelector } from "lib/redux/hooks";
 import { selectSkills, changeSkills } from "lib/redux/resumeSlice";
 import {
   selectShowBulletPoints,
-  changeShowBulletPoints,
   selectThemeColor,
 } from "lib/redux/settingsSlice";
 import { useState } from "react";
@@ -46,11 +45,11 @@ export const SkillsForm = () => {
     dispatch(changeSkills({ field: "categories", value: updatedCategories }));
   };
 
-  const handleUpdateSkills = (categoryIdx: number, skillsText: string) => {
+  const handleUpdateSkills = (categoryIdx: number, skills: string[]) => {
     const updatedCategories = [...categories];
     updatedCategories[categoryIdx] = {
       ...updatedCategories[categoryIdx],
-      skills: skillsText.split("\n").filter(s => s.trim()),
+      skills: skills.filter(s => s.trim()),
     };
     dispatch(changeSkills({ field: "categories", value: updatedCategories }));
   };
@@ -134,9 +133,10 @@ export const SkillsForm = () => {
               </button>
             </div>
             <BulletListTextarea
+              label=""
               name={`skills-${idx}`}
               placeholder="Enter skills for this category (one per line)"
-              value={category.skills.join("\n")}
+              value={category.skills}
               onChange={(_, value) => handleUpdateSkills(idx, value)}
               showBulletPoints={true}
             />
