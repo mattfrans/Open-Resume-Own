@@ -80,9 +80,11 @@ export const ResumePDFBulletList = ({
   items,
   showBulletPoints = true,
 }: {
-  items: string[];
+  items?: string[];
   showBulletPoints?: boolean;
 }) => {
+  if (!items?.length) return null;
+
   return (
     <>
       {items.map((item, idx) => (
@@ -99,10 +101,12 @@ export const ResumePDFBulletList = ({
               {"•"}
             </ResumePDFText>
           )}
-          {/* A breaking change was introduced causing text layout to be wider than node's width
-              https://github.com/diegomura/react-pdf/issues/2182. flexGrow & flexBasis fixes it */}
           <ResumePDFText
-            style={{ lineHeight: "1.3", flexGrow: 1, flexBasis: 0 }}
+            style={{
+              flex: 1,
+              lineHeight: "1.3",
+              paddingLeft: showBulletPoints ? "0" : spacing["2"],
+            }}
           >
             {item}
           </ResumePDFText>

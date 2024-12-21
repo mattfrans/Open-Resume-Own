@@ -57,7 +57,7 @@ export const initialFeaturedSkills: FeaturedSkill[] = Array(6).fill({
   ...initialFeaturedSkill,
 });
 export const initialSkills: ResumeSkills = {
-  featuredSkills: initialFeaturedSkills,
+  featuredSkills: [],
   categories: [],
 };
 
@@ -71,12 +71,16 @@ export const initialCustom = {
 
 export const initialResumeState: Resume = {
   profile: initialProfile,
-  workExperiences: [initialWorkExperience],
-  educations: [initialEducation],
-  projects: [initialProject],
+  workExperiences: [],
+  educations: [],
+  projects: [],
   skills: initialSkills,
-  custom: initialCustom,
-  references: initialReferences,
+  custom: {
+    descriptions: [],
+  },
+  references: {
+    references: [],
+  },
 };
 
 // Keep the field & value type in sync with CreateHandleChangeArgsWithDescriptions (components\ResumeForm\types.ts)
@@ -94,78 +98,37 @@ export const resumeSlice = createSlice({
   name: "resume",
   initialState: initialResumeState,
   reducers: {
-    changeProfile: (
-      draft,
-      action: PayloadAction<{ field: keyof ResumeProfile; value: string }>
-    ) => {
-      const { field, value } = action.payload;
-      draft.profile[field] = value;
+    changeProfile(draft, action: PayloadAction<Partial<ResumeProfile>>) {
+      Object.assign(draft.profile, action.payload);
     },
-    changeWorkExperiences: (
-      draft,
-      action: PayloadAction<
-        CreateChangeActionWithDescriptions<ResumeWorkExperience>
-      >
-    ) => {
-      const { idx, field, value } = action.payload;
-      const workExperience = draft.workExperiences[idx];
-      workExperience[field] = value as any;
+    changeWorkExperiences(draft, action: PayloadAction<ResumeWorkExperience[]>) {
+      draft.workExperiences = action.payload;
     },
-    changeEducations: (
-      draft,
-      action: PayloadAction<CreateChangeActionWithDescriptions<ResumeEducation>>
-    ) => {
-      const { idx, field, value } = action.payload;
-      const education = draft.educations[idx];
-      education[field] = value as any;
+    changeEducations(draft, action: PayloadAction<ResumeEducation[]>) {
+      draft.educations = action.payload;
     },
-    changeProjects: (
-      draft,
-      action: PayloadAction<CreateChangeActionWithDescriptions<ResumeProject>>
-    ) => {
-      const { idx, field, value } = action.payload;
-      const project = draft.projects[idx];
-      project[field] = value as any;
+    changeProjects(draft, action: PayloadAction<ResumeProject[]>) {
+      draft.projects = action.payload;
     },
-    changeSkills: (
-      draft,
-      action: PayloadAction<
-        | { field: "categories"; value: SkillCategory[] }
-        | {
-            field: "featuredSkills";
-            idx: number;
-            skill: string;
-            rating: number;
-          }
-      >
-    ) => {
-      const { field } = action.payload;
-      if (field === "categories") {
-        const { value } = action.payload;
-        draft.skills.categories = value;
-      } else {
-        const { idx, skill, rating } = action.payload;
-        const featuredSkill = draft.skills.featuredSkills[idx];
-        featuredSkill.skill = skill;
-        featuredSkill.rating = rating;
-      }
-    },
-    changeReferences: (
+    changeSkills(
       draft,
       action: PayloadAction<{
-        field: "references";
-        value: Reference[];
+        featuredSkills?: FeaturedSkill[];
+        categories?: { name: string; skills: string[] }[];
       }>
-    ) => {
-      const { field, value } = action.payload;
-      draft.references[field] = value;
+    ) {
+      if (action.payload.featuredSkills !== undefined) {
+        draft.skills.featuredSkills = action.payload.featuredSkills;
+      }
+      if (action.payload.categories !== undefined) {
+        draft.skills.categories = action.payload.categories;
+      }
     },
-    changeCustom: (
-      draft,
-      action: PayloadAction<{ field: "descriptions"; value: string[] }>
-    ) => {
-      const { value } = action.payload;
-      draft.custom.descriptions = value;
+    changeCustom(draft, action: PayloadAction<{ descriptions: string[] }>) {
+      draft.custom = action.payload;
+    },
+    changeReferences(draft, action: PayloadAction<{ references: Reference[] }>) {
+      draft.references = action.payload;
     },
     addSectionInForm: (draft, action: PayloadAction<{ form: ShowForm }>) => {
       const { form } = action.payload;
@@ -232,8 +195,8 @@ export const {
   changeEducations,
   changeProjects,
   changeSkills,
-  changeReferences,
   changeCustom,
+  changeReferences,
   addSectionInForm,
   moveSectionInForm,
   deleteSectionInFormByIdx,

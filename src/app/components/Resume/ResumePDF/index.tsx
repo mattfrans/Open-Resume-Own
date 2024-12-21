@@ -70,6 +70,7 @@ export const ResumePDF = ({
         heading={formToHeading["skills"]}
         skills={skills}
         themeColor={themeColor}
+        settings={settings}
       />
     ),
     custom: () => (

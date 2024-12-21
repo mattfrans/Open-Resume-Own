@@ -116,12 +116,12 @@ const BulletListTextareaGeneral = <T extends string>({
   label,
   labelClassName: wrapperClassName,
   name,
-  value: bulletListStrings = [],
+  value = [],
   placeholder,
   onChange,
   showBulletPoints = true,
 }: InputProps<T, string[]> & { showBulletPoints?: boolean }) => {
-  const html = getHTMLFromBulletListStrings(bulletListStrings);
+  const html = getHTMLFromBulletListStrings(value);
   return (
     <InputGroupWrapper label={label} className={wrapperClassName}>
       <ContentEditable
@@ -129,13 +129,11 @@ const BulletListTextareaGeneral = <T extends string>({
         className={`${INPUT_CLASS_NAME} cursor-text [&>div]:list-item ${
           showBulletPoints ? "pl-7" : "[&>div]:list-['']"
         }`}
-        // Note: placeholder currently doesn't work
         placeholder={placeholder}
         onChange={(e) => {
           if (e.type === "input") {
             const { innerText } = e.currentTarget as HTMLDivElement;
-            const newBulletListStrings =
-              getBulletListStringsFromInnerText(innerText);
+            const newBulletListStrings = getBulletListStringsFromInnerText(innerText);
             onChange(name, newBulletListStrings);
           }
         }}
@@ -145,41 +143,25 @@ const BulletListTextareaGeneral = <T extends string>({
   );
 };
 
-const NORMALIZED_LINE_BREAK = "\n";
-/**
- * Normalize line breaks to be \n since different OS uses different line break
- *    Windows -> \r\n (CRLF)
- *    Unix    -> \n (LF)
- *    Mac     -> \n (LF), or \r (CR) for earlier versions
- */
-const normalizeLineBreak = (str: string) =>
-  str.replace(/\r?\n/g, NORMALIZED_LINE_BREAK);
-const dedupeLineBreak = (str: string) =>
-  str.replace(/\n\n/g, NORMALIZED_LINE_BREAK);
-const getStringsByLineBreak = (str: string) => str.split(NORMALIZED_LINE_BREAK);
-
 const getBulletListStringsFromInnerText = (innerText: string) => {
   const innerTextWithNormalizedLineBreak = normalizeLineBreak(innerText);
-
-  // In Windows Chrome, pressing enter creates 2 line breaks "\n\n"
-  // This dedupes it into 1 line break "\n"
   let newInnerText = dedupeLineBreak(innerTextWithNormalizedLineBreak);
 
-  // Handle the special case when content is empty
   if (newInnerText === NORMALIZED_LINE_BREAK) {
     newInnerText = "";
   }
 
-  return getStringsByLineBreak(newInnerText);
+  return getStringsByLineBreak(newInnerText)
+    .map(s => s.trim())
+    .filter(s => s !== "");
 };
 
-const getHTMLFromBulletListStrings = (bulletListStrings: string[]) => {
-  // If bulletListStrings is an empty array, make it an empty div
-  if (bulletListStrings.length === 0) {
-    return "<div></div>";
+const getHTMLFromBulletListStrings = (bulletListStrings: string[] = []) => {
+  if (!bulletListStrings || bulletListStrings.length === 0) {
+    return "<div><br></div>";
   }
 
-  return bulletListStrings.map((text) => `<div>${text}</div>`).join("");
+  return bulletListStrings.map((text) => `<div>${text.trim()}</div>`).join("");
 };
 
 /**
@@ -192,13 +174,13 @@ const BulletListTextareaFallback = <T extends string>({
   label,
   labelClassName,
   name,
-  value: bulletListStrings = [],
+  value = [],
   placeholder,
   onChange,
   showBulletPoints = true,
 }: InputProps<T, string[]> & { showBulletPoints?: boolean }) => {
   const textareaValue = getTextareaValueFromBulletListStrings(
-    bulletListStrings,
+    value,
     showBulletPoints
   );
 
@@ -274,3 +256,16 @@ const getBulletListStringsFromTextareaValue = (
 
   return strings;
 };
+
+const NORMALIZED_LINE_BREAK = "\n";
+/**
+ * Normalize line breaks to be \n since different OS uses different line break
+ *    Windows -> \r\n (CRLF)
+ *    Unix    -> \n (LF)
+ *    Mac     -> \n (LF), or \r (CR) for earlier versions
+ */
+const normalizeLineBreak = (str: string) =>
+  str.replace(/\r?\n/g, NORMALIZED_LINE_BREAK);
+const dedupeLineBreak = (str: string) =>
+  str.replace(/\n\n/g, NORMALIZED_LINE_BREAK);
+const getStringsByLineBreak = (str: string) => str.split(NORMALIZED_LINE_BREAK);

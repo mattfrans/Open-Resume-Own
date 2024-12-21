@@ -13,6 +13,7 @@ export interface Settings {
     skills: boolean;
     custom: boolean;
     references: boolean;
+    featuredSkills: boolean;
   };
   formToHeading: {
     workExperiences: string;
@@ -63,6 +64,7 @@ export const initialSettings: Settings = {
     skills: true,
     custom: false,
     references: false,
+    featuredSkills: false,
   },
   formToHeading: {
     workExperiences: "WORK EXPERIENCE",

@@ -1,69 +1,57 @@
-import { View, Text } from "@react-pdf/renderer";
-import { ResumePDFSection, ResumePDFText } from "components/Resume/ResumePDF/common";
-import { styles } from "components/Resume/ResumePDF/styles";
+import { View } from "@react-pdf/renderer";
+import {
+  ResumePDFSection,
+  ResumePDFBulletList,
+  ResumePDFText,
+} from "components/Resume/ResumePDF/common";
+import { styles, spacing } from "components/Resume/ResumePDF/styles";
 import type { ResumeSkills } from "lib/redux/types";
+import type { Settings } from "lib/redux/settingsSlice";
 
 export const ResumePDFSkills = ({
   heading,
   skills,
   themeColor,
+  settings,
 }: {
   heading: string;
   skills: ResumeSkills;
   themeColor: string;
+  settings: Settings;
 }) => {
-  const { featuredSkills, descriptions } = skills;
+  const { featuredSkills, categories } = skills;
+  const showFeaturedSkills = settings.formToShow.featuredSkills;
 
-  if (!featuredSkills.length && !descriptions.length) {
+  if (!categories?.length && (!showFeaturedSkills || !featuredSkills?.length)) {
     return null;
   }
 
   return (
     <ResumePDFSection themeColor={themeColor} heading={heading}>
-      <View style={{ ...styles.flexCol, gap: 8 }}>
-        {featuredSkills.length > 0 && (
+      <View style={{ ...styles.flexCol, gap: spacing[4] }}>
+        {showFeaturedSkills && featuredSkills?.length > 0 && (
           <View style={{ ...styles.section }}>
-            <ResumePDFText bold={true}>Featured Skills</ResumePDFText>
-            <View style={{ ...styles.flexRow, flexWrap: 'wrap' as const, gap: 4 }}>
-              {featuredSkills.map(({ skill, rating }, idx) => (
-                <View
-                  key={idx}
-                  style={{
-                    ...styles.flexRow,
-                    alignItems: 'center' as const,
-                    marginRight: 12,
-                    marginBottom: 4,
-                  }}
-                >
-                  <ResumePDFText>{skill}</ResumePDFText>
-                  <Text style={{ fontSize: 10, color: '#666' }}>
-                    {" "}
-                    ({rating}/5)
-                  </Text>
-                </View>
-              ))}
+            <ResumePDFText style={{ fontWeight: "bold", fontSize: "11pt", marginBottom: spacing[1] }}>
+              Featured Skills
+            </ResumePDFText>
+            <View style={{ marginTop: spacing["1"] }}>
+              <ResumePDFBulletList 
+                items={featuredSkills.map(({ skill, rating }) => `${skill} (${rating}/5)`)} 
+              />
             </View>
           </View>
         )}
 
-        {descriptions.length > 0 && (
-          <View style={{ ...styles.section }}>
-            <ResumePDFText bold={true}>Additional Skills</ResumePDFText>
-            <View style={{ ...styles.flexRow, flexWrap: 'wrap' as const }}>
-              {descriptions.map((skill, idx) => (
-                <View
-                  key={idx}
-                  style={{
-                    marginRight: 12,
-                    marginBottom: 4,
-                  }}
-                >
-                  <ResumePDFText>{skill}</ResumePDFText>
-                </View>
-              ))}
+        {categories?.map((category, idx) => (
+          <View key={idx} style={{ ...styles.section }}>
+            <ResumePDFText style={{ fontWeight: "bold", fontSize: "11pt", marginBottom: spacing[1] }}>
+              {category.name}
+            </ResumePDFText>
+            <View style={{ marginTop: spacing["1"] }}>
+              <ResumePDFBulletList items={category.skills} />
             </View>
           </View>
-        )}
+        ))}
       </View>
     </ResumePDFSection>
   );
