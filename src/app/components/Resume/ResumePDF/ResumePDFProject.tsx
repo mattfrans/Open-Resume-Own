@@ -16,9 +16,11 @@ export const ResumePDFProject = ({
   projects: ResumeProject[];
   themeColor: string;
 }) => {
+  const projectsArray = Array.isArray(projects) ? projects : [];
+
   return (
     <ResumePDFSection themeColor={themeColor} heading={heading}>
-      {projects.map(({ project, date, descriptions }, idx) => (
+      {projectsArray.map(({ project, date, descriptions }, idx) => (
         <View key={idx}>
           <View
             style={{

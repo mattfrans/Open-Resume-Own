@@ -60,7 +60,7 @@ export const ResumePDF = ({
     projects: () => (
       <ResumePDFProject
         heading={formToHeading["projects"]}
-        projects={projects}
+        projects={Array.isArray(projects) ? projects : []}
         themeColor={themeColor}
         showBulletPoints={showBulletPoints["projects"]}
       />
@@ -93,7 +93,7 @@ export const ResumePDF = ({
   return (
     <>
       <Document title={`${name} Resume`} author={name} producer={"OpenResume"}>
-        {/* First Page */}
+        {/* First Page - Everything except Skills */}
         <Page
           size={documentSize === "A4" ? "A4" : "LETTER"}
           style={{
@@ -123,15 +123,17 @@ export const ResumePDF = ({
               themeColor={themeColor}
               isPDF={isPDF}
             />
-            {formsBeforeSkills.map((form) => {
-              const Component = formToComponent[form];
-              return <Component key={form} />;
-            })}
+            {showFormsOrder
+              .filter((form) => form !== "skills")
+              .map((form) => {
+                const Component = formToComponent[form];
+                return <Component key={form} />;
+              })}
           </View>
         </Page>
 
         {/* Skills Page */}
-        {skillsIndex !== -1 && (
+        {formToShow["skills"] && (
           <Page
             size={documentSize === "A4" ? "A4" : "LETTER"}
             style={{
@@ -157,10 +159,6 @@ export const ResumePDF = ({
               }}
             >
               {formToComponent["skills"]()}
-              {formsAfterSkills.map((form) => {
-                const Component = formToComponent[form];
-                return <Component key={form} />;
-              })}
             </View>
           </Page>
         )}

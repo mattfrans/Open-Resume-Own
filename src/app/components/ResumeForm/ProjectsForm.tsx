@@ -22,7 +22,7 @@ export const ProjectsForm = () => {
             value,
           ]: CreateHandleChangeArgsWithDescriptions<ResumeProject>
         ) => {
-          dispatch(changeProjects({ idx, field, value } as any));
+          dispatch(changeProjects({ idx, field, value }));
         };
         const showMoveUp = idx !== 0;
         const showMoveDown = idx !== projects.length - 1;
@@ -35,7 +35,7 @@ export const ProjectsForm = () => {
             showMoveUp={showMoveUp}
             showMoveDown={showMoveDown}
             showDelete={showDelete}
-            deleteButtonTooltipText={"Delete project"}
+            deleteButtonTooltipText="Delete project"
           >
             <Input
               name="project"
@@ -56,7 +56,11 @@ export const ProjectsForm = () => {
             <BulletListTextarea
               name="descriptions"
               label="Description"
-              placeholder="Bullet points"
+              placeholder={[
+                "Implemented user authentication with OAuth 2.0",
+                "Designed and built REST API endpoints",
+                "Improved page load speed by 50%",
+              ]}
               value={descriptions}
               onChange={handleProjectChange}
               labelClassName="col-span-full"

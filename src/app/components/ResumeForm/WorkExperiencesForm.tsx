@@ -15,24 +15,21 @@ export const WorkExperiencesForm = () => {
   const workExperiences = useAppSelector(selectWorkExperiences);
   const dispatch = useAppDispatch();
 
-  const showDelete = workExperiences.length > 1;
+  const showDelete = (workExperiences?.length || 0) > 1;
 
   return (
     <Form form="workExperiences" addButtonText="Add Job">
-      {workExperiences.map(({ company, jobTitle, date, descriptions }, idx) => {
+      {workExperiences?.map(({ company, jobTitle, date, descriptions }, idx) => {
         const handleWorkExperienceChange = (
           ...[
             field,
             value,
           ]: CreateHandleChangeArgsWithDescriptions<ResumeWorkExperience>
         ) => {
-          // TS doesn't support passing union type to single call signature
-          // https://github.com/microsoft/TypeScript/issues/54027
-          // any is used here as a workaround
-          dispatch(changeWorkExperiences({ idx, field, value } as any));
+          dispatch(changeWorkExperiences({ idx, field, value }));
         };
         const showMoveUp = idx !== 0;
-        const showMoveDown = idx !== workExperiences.length - 1;
+        const showMoveDown = idx !== workExperiences?.length - 1;
 
         return (
           <FormSection
