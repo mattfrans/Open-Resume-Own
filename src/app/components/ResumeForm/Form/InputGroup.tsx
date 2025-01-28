@@ -11,6 +11,7 @@ interface InputProps<K extends string, V extends string | string[]> {
   value?: V;
   placeholder: string;
   onChange: (name: K, value: V) => void;
+  type?: string;
 }
 
 /**
@@ -42,15 +43,16 @@ export const Input = <K extends string>({
   onChange,
   label,
   labelClassName,
+  type = "text",
 }: InputProps<K, string>) => {
   return (
     <InputGroupWrapper label={label} className={labelClassName}>
       <input
-        type="text"
+        type={type}
         name={name}
         value={value}
         placeholder={placeholder}
-        onChange={(e) => onChange(name, e.target.value)}
+        onChange={(e) => onChange(name as K, e.target.value)}
         className={INPUT_CLASS_NAME}
       />
     </InputGroupWrapper>

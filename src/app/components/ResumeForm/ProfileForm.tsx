@@ -10,7 +10,7 @@ export const ProfileForm = () => {
   const { name, email, phone, url, summary, location } = profile;
 
   const handleProfileChange = (field: keyof ResumeProfile, value: string) => {
-    dispatch(changeProfile({ field, value }));
+    dispatch(changeProfile({ [field]: value }));
   };
 
   return (
@@ -42,9 +42,10 @@ export const ProfileForm = () => {
         />
         <Input
           label="Phone"
-          labelClassName="col-span-2"
+          labelClassName="col-span-3"
           name="phone"
-          placeholder="(123)456-7890"
+          type="tel"
+          placeholder="+1 (555) 555-5555"
           value={phone}
           onChange={handleProfileChange}
         />
