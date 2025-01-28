@@ -34,13 +34,13 @@ export const AutoTypingResume = () => {
     projects: [],
     skills: {
       featuredSkills: [],
-      descriptions: [],
+      categories: []
     },
     custom: {
       descriptions: [],
     },
     references: {
-      descriptions: [],
+      references: [],
     },
   });
 
@@ -54,11 +54,11 @@ export const AutoTypingResume = () => {
         : "",
       educations: resume.educations?.[0]?.school ? "EDUCATION" : "",
       projects: resume.projects?.[0]?.project ? "PROJECT" : "",
-      skills: resume.skills?.featuredSkills?.length || resume.skills?.descriptions?.length
+      skills: resume.skills?.featuredSkills?.length || resume.skills?.categories?.length
         ? "SKILLS"
         : "",
       custom: resume.custom?.descriptions?.length ? "CUSTOM" : "",
-      references: resume.references?.descriptions?.length ? "REFERENCES" : "",
+      references: resume.references?.references?.length ? "REFERENCES" : "",
     },
     formToShow: {
       workExperiences: true,
@@ -236,10 +236,7 @@ export const AutoTypingResume = () => {
         }
 
         // Update skills
-        if (
-          newResume.skills.featuredSkills.length === 0 &&
-          newResume.skills.descriptions.length === 0
-        ) {
+        if (newResume.skills.featuredSkills.length === 0) {
           newResume.skills = {
             featuredSkills: [
               { skill: "Python", rating: 5 },
@@ -251,16 +248,17 @@ export const AutoTypingResume = () => {
               { skill: "SQL", rating: 4 },
               { skill: "Git", rating: 4 },
             ],
-            descriptions: [
-              "Machine Learning",
-              "Data Analysis",
-              "Web Development",
-              "API Development",
-              "Problem Solving",
-              "Team Collaboration",
-            ],
+            categories: [
+              {
+                name: "Programming",
+                skills: ["Machine Learning", "Data Analysis", "Web Development", "API Development"]
+              },
+              {
+                name: "Soft Skills",
+                skills: ["Problem Solving", "Team Collaboration"]
+              }
+            ]
           };
-          return newResume;
         }
 
         return newResume;
@@ -284,7 +282,7 @@ export const AutoTypingResume = () => {
                 : "",
               educations: resume.educations?.[0]?.school ? "EDUCATION" : "",
               projects: resume.projects?.[0]?.project ? "PROJECT" : "",
-              skills: resume.skills?.featuredSkills?.length || resume.skills?.descriptions?.length
+              skills: resume.skills?.featuredSkills?.length || resume.skills?.categories?.length
                 ? "SKILLS"
                 : "",
               custom: "CUSTOM SECTION",

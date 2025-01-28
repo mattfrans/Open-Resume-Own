@@ -72,7 +72,7 @@ export const initialCustom = {
 export const initialResumeState: Resume = {
   profile: initialProfile,
   workExperiences: [structuredClone(initialWorkExperience)],
-  educations: [],
+  educations: [structuredClone(initialEducation)],
   projects: Array.isArray([]) ? [] : [structuredClone(initialProject)],
   skills: initialSkills,
   custom: {
@@ -114,8 +114,18 @@ export const resumeSlice = createSlice({
       workExperience[field] = value;
       draft.workExperiences[idx] = workExperience;
     },
-    changeEducations(draft, action: PayloadAction<ResumeEducation[]>) {
-      draft.educations = action.payload;
+    changeEducations(
+      draft,
+      action: PayloadAction<{
+        idx: number;
+        field: keyof ResumeEducation;
+        value: string | string[];
+      }>
+    ) {
+      const { idx, field, value } = action.payload;
+      const education = draft.educations[idx] || structuredClone(initialEducation);
+      education[field] = value;
+      draft.educations[idx] = education;
     },
     changeProjects(
       draft,

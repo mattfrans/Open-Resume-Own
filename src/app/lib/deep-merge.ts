@@ -13,6 +13,11 @@ export const deepMerge = (target: Object, source: Object, level = 0) => {
   const copyTarget = level === 0 ? structuredClone(target) : target;
   for (const key in source) {
     const sourceValue = source[key];
+    // Special handling for arrays - ensure we always have an array
+    if (Array.isArray(copyTarget[key])) {
+      copyTarget[key] = Array.isArray(sourceValue) ? sourceValue : []; 
+      continue;
+    }
     // Assign source value to copyTarget if source value is not an object.
     // Otherwise, call deepMerge recursively to merge all its keys
     if (!isObject(sourceValue)) {
